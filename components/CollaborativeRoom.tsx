@@ -6,9 +6,9 @@ import { Editor } from '@/components/editor/Editor'
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import ActiveCollaborators from './ActiveCollaborators';
 
-const CollaborativeRoom = () => {
+const CollaborativeRoom = ({roomId, roomMetadata}: CollaborativeRoomProps) => {
   return (
-    <RoomProvider id="my-room">
+    <RoomProvider id={roomId}>
       <ClientSideSuspense fallback={<div>Loading…</div>}>
         <div className='collaborative-room'>
           <Header>
