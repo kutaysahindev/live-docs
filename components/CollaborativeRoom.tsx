@@ -5,7 +5,7 @@ import Header from '@/components/Header'
 import { Editor } from '@/components/editor/Editor'
 import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import ActiveCollaborators from './ActiveCollaborators';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Input } from './ui/input';
 import Image from 'next/image';
 
@@ -23,6 +23,20 @@ const CollaborativeRoom = ({roomId, roomMetadata}: CollaborativeRoomProps) => {
   const updateTitleHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
 
   }
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if(containerRef.current && !containerRef.current.contains(e.target as Node)){
+        setEditing(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [])
 
   return (
     <RoomProvider id={roomId}>
