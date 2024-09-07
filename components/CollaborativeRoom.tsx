@@ -8,6 +8,7 @@ import ActiveCollaborators from './ActiveCollaborators';
 import { useEffect, useRef, useState } from 'react';
 import { Input } from './ui/input';
 import Image from 'next/image';
+import { updateDocument } from "@/lib/actions/room.actions";
 
 const CollaborativeRoom = ({roomId, roomMetadata}: CollaborativeRoomProps) => {
 
@@ -15,19 +16,34 @@ const CollaborativeRoom = ({roomId, roomMetadata}: CollaborativeRoomProps) => {
 
   const [documentTitle, setDocumentTitle] = useState(roomMetadata.title);
   const [editing, setEditing] = useState(false);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLDivElement>(null);
 
-  const updateTitleHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const updateTitleHandler = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === "Enter"){
+      setLoading(true);
 
+      try {
+        if(documentTitle !== roomMetadata.title){
+          const updatedDocument = await updateDocument(roomId, documentTitle);
+
+          if(updatedDocument){
+            setEditing(false);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if(containerRef.current && !containerRef.current.contains(e.target as Node)){
-        setEditing(false)
+        setEditing(false);
+        updateDocument(roomId, documentTitle);
       }
     }
 
@@ -36,7 +52,13 @@ const CollaborativeRoom = ({roomId, roomMetadata}: CollaborativeRoomProps) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [])
+  }, [roomId, documentTitle]);
+
+  useEffect(() => {
+    if(editing && inputRef.current){
+      inputRef.current.focus();
+    }
+  }, [editing])
 
   return (
     <RoomProvider id={roomId}>
