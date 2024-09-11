@@ -11,7 +11,9 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import React from 'react';
 
-import { liveblocksConfig } from "@liveblocks/react-lexical";
+import { liveblocksConfig, useEditorStatus } from "@liveblocks/react-lexical";
+import Loader from "../Loader";
+import FloatingToolbarPlugin from "./plugins/FloatingToolbarPlugin";
 
 // Catch any errors that occur during Lexical updates and log them
 // or throw them as needed. If you don't throw them, Lexical will
@@ -22,6 +24,8 @@ function Placeholder() {
 }
 
 export function Editor({roomId, currentUserType}: { roomId: string, currentUserType: UserType}) {
+  const status = useEditorStatus();
+
   const initialConfig = liveblocksConfig({
     namespace: 'Editor',
     nodes: [HeadingNode],
@@ -42,19 +46,20 @@ export function Editor({roomId, currentUserType}: { roomId: string, currentUserT
         </div>
 
         <div className="editor-wrapper flex flex-col items-center justify-start">
-
-        </div>
-
-        <div className="editor-inner h-[1100px]">
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable className="editor-input h-full" />
-            }
-            placeholder={<Placeholder />}
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-          <HistoryPlugin />
-          <AutoFocusPlugin />
+          {status === "not-loaded" || status === "loading" ? <Loader /> : (
+            <div className="editor-inner min-h-[1100px] relative mb-5 h-fit w-full max-w-[800px] shadow-md lg:mb-10 ">
+              <RichTextPlugin
+                contentEditable={
+                  <ContentEditable className="editor-input h-full" />
+                }
+                placeholder={<Placeholder />}
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+              { currentUserType === "editor" && <FloatingToolbarPlugin/> } 
+              <HistoryPlugin />
+              <AutoFocusPlugin />
+            </div>
+          )}
         </div>
       </div>
     </LexicalComposer>
