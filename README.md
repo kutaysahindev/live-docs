@@ -3,12 +3,12 @@
 A real-time collaborative document editor built with Next.js and Liveblocks, featuring GitHub authentication, multi-user editing, document management, comments, real-time presence indicators, notifications, and responsive design.
 
 <p align="center">
-  <img src="" alt="Screenshot">
+  <img src="https://github.com/user-attachments/assets/507f6e00-d381-42f4-a466-9d79c6e46a8c" alt="Screenshot">
 </p>
 
 ## Live Demo
 
-Check out the live demo [here]().
+Check out the live demo [here](https://live-docs-ks.vercel.app/).
 
 ## Tech Stack
 
